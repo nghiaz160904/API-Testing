@@ -43,7 +43,8 @@ docker-compose up -d
 # Chờ khoảng 60 giây để các service khởi động hoàn tất
 
 # Tạo database và dữ liệu mẫu
-docker compose exec laravel-api php artisan migrate:fresh --seed --force
+docker compose exec laravel-api php artisan migrate:fresh --seed
+# Chọn YES
 
 # Kiểm tra ứng dụng: http://localhost:8091 (API), http://localhost:8092 (UI)
 ```
@@ -55,6 +56,7 @@ docker compose exec laravel-api php artisan migrate:fresh --seed --force
 ```bash
 # Cài đặt PHP dependencies (Laravel packages)
 docker compose run --rm composer
+# Chọn YES
 
 # Sau đó chạy lại lệnh tạo database
 docker compose exec laravel-api php artisan migrate:fresh --seed --force
