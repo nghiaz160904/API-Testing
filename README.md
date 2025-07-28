@@ -48,6 +48,22 @@ docker compose exec laravel-api php artisan migrate:fresh --seed --force
 # Kiểm tra ứng dụng: http://localhost:8091 (API), http://localhost:8092 (UI)
 ```
 
+### 🔧 Khắc phục sự cố
+
+**Nếu lệnh tạo database bị lỗi hoặc sau 60 giây mà chưa thấy thư mục `vendor` trong `sprint5-with-bugs/API/`:**
+
+```bash
+# Cài đặt PHP dependencies (Laravel packages)
+docker compose run --rm composer
+
+# Sau đó chạy lại lệnh tạo database
+docker compose exec laravel-api php artisan migrate:fresh --seed --force
+```
+
+**Các lỗi thường gặp:**
+- ❌ `Class not found` → Chạy `docker compose run --rm composer`
+- ❌ `Database connection failed` → Kiểm tra file .env và chờ
+
 1. Import collection và environment có sẵn từ `tests/api` vào Postman.
 2. Tạo file `user-accounts.csv` trong `tests/api` chứa các trường: `email`, `password`, `expected_status`.
 
