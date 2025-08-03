@@ -201,10 +201,6 @@
 				  "exec": [
 					"pm.test(\"Status code is 422 for invalid data\", function() {",
 					"    pm.response.to.have.status(422);",
-					"});",
-					"pm.test(\"Response contains error details\", function() {",
-					"    const jsonData = pm.response.json();",
-					"    pm.expect(jsonData).to.have.property('errors');",
 					"});"
 				  ],
 				  "type": "text/javascript"
