@@ -15,6 +15,7 @@ services:
       - "host=localhost"
       - DISABLE_LOGGING=${DISABLE_LOGGING}
 
+
   angular-ui:
     build:
       context: ./_docker
