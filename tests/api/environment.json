@@ -1,16 +1,19 @@
 {
-  "id": "api-test-environment",
-  "name": "API Test Environment",
-  "values": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:8091",
-      "enabled": true
-    },
-    {
-      "key": "api_timeout",
-      "value": "10000",
-      "enabled": true
-    }
-  ]
-}
+    "id": "f5f3e3c3-3e3c-4f5f-8e8e-3c3c3f5f3f5f",
+    "name": "Categories API Environment",
+    "values": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:8091",
+        "enabled": true
+      },
+      {
+        "key": "admin_token",
+        "value": "",
+        "enabled": false
+      }
+    ],
+    "_postman_variable_scope": "environment",
+    "_postman_exported_at": "",
+    "_postman_exported_using": "Postman/10.0.0"
+  }

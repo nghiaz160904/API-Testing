@@ -1,0 +1,236 @@
+{
+	"info": {
+	  "_postman_id": "d8e1b79f-2a7e-4beb-9e2a-4d380b624e38",
+	  "name": "Categories API (Test Cases)",
+	  "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+	  {
+		"name": "1. GET Operations",
+		"item": [
+		  {
+			"name": "1.1 Get All Categories - Success",
+			"request": {
+			  "method": "GET",
+			  "header": [],
+			  "url": {
+				"raw": "{{base_url}}/categories",
+				"host": ["{{base_url}}"],
+				"path": ["categories"]
+			  }
+			},
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "exec": [
+					"pm.test(\"Status code is 200\", function() {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					"pm.test(\"Response has valid JSON body\", function() {",
+					"    pm.response.to.be.json;",
+					"});",
+					"pm.test(\"Response contains array of categories\", function() {",
+					"    const jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.be.an('array');",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			]
+		  },
+		  {
+			"name": "1.2 Get Category Tree - Success",
+			"request": {
+			  "method": "GET",
+			  "header": [],
+			  "url": {
+				"raw": "{{base_url}}/categories/tree",
+				"host": ["{{base_url}}"],
+				"path": ["categories", "tree"]
+			  }
+			},
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "exec": [
+					"pm.test(\"Status code is 200\", function() {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					"pm.test(\"Response has parent-child structure\", function() {",
+					"    const jsonData = pm.response.json();",
+					"    pm.expect(jsonData[0]).to.have.property('sub_categories');",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			]
+		  },
+		  {
+			"name": "1.3 Get Single Category - Invalid ID",
+			"request": {
+			  "method": "GET",
+			  "header": [],
+			  "url": {
+				"raw": "{{base_url}}/categories/99999",
+				"host": ["{{base_url}}"],
+				"path": ["categories", "99999"]
+			  }
+			},
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "exec": [
+					"pm.test(\"Status code is 404 for invalid ID\", function() {",
+					"    pm.response.to.have.status(404);",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			]
+		  },
+		  {
+			"name": "1.4 Search Categories - Empty Results",
+			"request": {
+			  "method": "GET",
+			  "header": [],
+			  "url": {
+				"raw": "{{base_url}}/categories/search?q=InvalidSearchTerm",
+				"host": ["{{base_url}}"],
+				"path": ["categories", "search"],
+				"query": [
+				  {
+					"key": "q",
+					"value": "InvalidSearchTerm"
+				  }
+				]
+			  }
+			},
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "exec": [
+					"pm.test(\"Status code is 200 even with no results\", function() {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					"pm.test(\"Returns empty array for no matches\", function() {",
+					"    const jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.be.an('array').that.is.empty;",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			]
+		  }
+		]
+	  },
+	  {
+		"name": "2. CREATE Operations",
+		"item": [
+		  {
+			"name": "2.1 Create Category - Success",
+			"request": {
+			  "method": "POST",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n  \"name\": \"Test Category\",\n  \"slug\": \"test-category\",\n  \"parent_id\": null\n}"
+			  },
+			  "url": {
+				"raw": "{{base_url}}/categories",
+				"host": ["{{base_url}}"],
+				"path": ["categories"]
+			  }
+			},
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "exec": [
+					"pm.test(\"Status code is 201 for creation\", function() {",
+					"    pm.response.to.have.status(201);",
+					"});",
+					"pm.test(\"Response contains created category\", function() {",
+					"    const jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.have.property('id');",
+					"    pm.expect(jsonData.name).to.eql('Test Category');",
+					"    pm.collectionVariables.set('created_category_id', jsonData.id);",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			]
+		  },
+		  {
+			"name": "2.2 Create Category - Invalid Data",
+			"request": {
+			  "method": "POST",
+			  "header": [
+				{
+				  "key": "Content-Type",
+				  "value": "application/json"
+				}
+			  ],
+			  "body": {
+				"mode": "raw",
+				"raw": "{\n  \"name\": \"\",\n  \"slug\": \"\",\n  \"parent_id\": null\n}"
+			  },
+			  "url": {
+				"raw": "{{base_url}}/categories",
+				"host": ["{{base_url}}"],
+				"path": ["categories"]
+			  }
+			},
+			"event": [
+			  {
+				"listen": "test",
+				"script": {
+				  "exec": [
+					"pm.test(\"Status code is 422 for invalid data\", function() {",
+					"    pm.response.to.have.status(422);",
+					"});",
+					"pm.test(\"Response contains error details\", function() {",
+					"    const jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.have.property('errors');",
+					"});"
+				  ],
+				  "type": "text/javascript"
+				}
+			  }
+			]
+		  }
+		]
+	  }
+	],
+	"variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8091"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "token_expiry",
+      "value": ""
+    },
+    {
+      "key": "created_category_id",
+      "value": ""
+    }
+  ]
+}
