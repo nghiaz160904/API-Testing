@@ -1,0 +1,35 @@
+newman
+
+GET Category Details API
+
+❏ Test Cases for GET /categories/{categoryId}
+↳ TC1 - Get existing category (success)
+  GET http://localhost:8091/categories/1 [200 OK, 724B, 55ms]
+  ✓  Status code is 200
+  ✓  Should return correct category
+  ✓  Should include subcategories if any
+
+↳ TC2 - Get non-existing category (error)
+  GET http://localhost:8091/categories/9999 [404 Not Found, 266B, 28ms]
+  ✓  Status code is 404
+  ✓  Should return not found message
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │                 2 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │                 2 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 0 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │                 5 │                0 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 171ms                                      │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 511B (approx)                             │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 41ms [min: 28ms, max: 55ms, s.d.: 13ms] │
+└────────────────────────────────────────────────────────────────┘

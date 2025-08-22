@@ -1,0 +1,102 @@
+{
+	"info": {
+		"_postman_id": "0f2e051e-b44d-428e-baca-6fc118d47ab4",
+		"name": "GET Category Details API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39635915"
+	},
+	"item": [
+		{
+			"name": "Test Cases for GET /categories/{categoryId}",
+			"item": [
+				{
+					"name": "TC1 - Get existing category (success)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return correct category\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.eql(1);",
+									"    pm.expect(jsonData.name).to.exist;",
+									"    pm.expect(jsonData.slug).to.exist;",
+									"});",
+									"",
+									"pm.test(\"Should include subcategories if any\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    if (jsonData.sub_categories) {",
+									"        pm.expect(jsonData.sub_categories).to.be.an('array');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC2 - Get non-existing category (error)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function() {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Should return not found message\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('not found');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/9999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"9999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8091"
+		}
+	]
+}

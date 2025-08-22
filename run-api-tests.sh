@@ -33,36 +33,50 @@ echo "🗄️ Setting up database..."
 docker compose exec laravel-api php artisan migrate --force
 docker compose exec laravel-api php artisan db:seed --force
 
-# Chạy tests với logging chi tiết
-echo "🧪 Running API tests..."
-newman run "./tests/api/collection.json" \
-  --environment "./tests/api/environment.json" \
-  --reporters cli,htmlextra \
-  --reporter-htmlextra-export "reports/api-test-report.html" \
-  --reporter-htmlextra-title "API Test Report" 2>&1 | tee reports/test.log
+# Define collections to test
+collections=(
+    "GET_Categories_Tree_API.postman_collection.json"
+    "GET_Category_Details_API.postman_collection.json"
+    "POST_Categories_API.postman_collection.json"
+)
 
-# Kiểm tra kết quả
-if [ ${PIPESTATUS[0]} -eq 0 ]; then
-    echo "✅ All tests passed successfully!"
-else
-    echo "❌ Some tests failed. Check the report and log for details."
-    echo "📋 Log file: reports/test.log"
-fi
-
-# Mở báo cáo nếu tồn tại
-if [ -f "reports/api-test-report.html" ]; then
-    echo "📊 Opening test report..."
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        xdg-open "reports/api-test-report.html"
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        open "reports/api-test-report.html"
+# Run tests for each collection
+overall_status=0
+for collection in "${collections[@]}"; do
+    collection_name=$(basename "$collection" .postman_collection.json)
+    report_file="reports/${collection_name}_report.html"
+    log_file="reports/${collection_name}.log"
+    
+    echo -e "\n🧪 Testing Collection: $collection_name"
+    
+    newman run "./tests/api/$collection" \
+        --environment "./tests/api/environment.json" \
+        --reporters cli,htmlextra \
+        --reporter-htmlextra-export "$report_file" \
+        --reporter-htmlextra-title "$collection_name Test Report" 2>&1 | tee "$log_file"
+    
+    # Capture exit status
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+        echo "❌ $collection_name tests failed"
+        overall_status=1
+    else
+        echo "✅ $collection_name tests passed"
     fi
+    
+    # Generate summary
+    echo "📊 Report: file://$(pwd)/$report_file"
+    echo "📋 Log: $(pwd)/$log_file"
+done
+
+# Final status
+if [ $overall_status -eq 0 ]; then
+    echo -e "\n🎉 All test collections passed successfully!"
 else
-    echo "⚠️ Test report not generated. Check logs for errors."
+    echo -e "\n🔴 Some test collections failed. Check individual reports."
 fi
 
-# Dọn dẹp
+# Clean up
 echo "🧹 Stopping Docker containers..."
 docker compose down
 
-echo "🏁 Test execution completed!"
+exit $overall_status

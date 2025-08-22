@@ -1,0 +1,148 @@
+{
+	"info": {
+		"_postman_id": "37591444-a6b2-4eb8-862e-3f2b9f8640fd",
+		"name": "GET Categories Tree API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39635915"
+	},
+	"item": [
+		{
+			"name": "Test Cases for GET /categories/tree",
+			"item": [
+				{
+					"name": "TC1 - Get full categories tree (success)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response should be array\", function() {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Should only contain root categories\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    jsonData.forEach(item => {",
+									"        pm.expect(item.parent_id).to.be.null;",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/tree",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"tree"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC2 - Get tree by existing slug (success)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return 1 category with matching slug\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array').with.lengthOf(1);",
+									"    pm.expect(jsonData[0].slug).to.eql('electronics');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/tree?by_category_slug=electronics",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"tree"
+							],
+							"query": [
+								{
+									"key": "by_category_slug",
+									"value": "electronics"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC3 - Get tree by non-existing slug (empty result)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Should return empty array\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array').that.is.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/tree?by_category_slug=non-existing-slug",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"tree"
+							],
+							"query": [
+								{
+									"key": "by_category_slug",
+									"value": "non-existing-slug"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8091"
+		}
+	]
+}

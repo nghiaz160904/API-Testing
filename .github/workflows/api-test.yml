@@ -61,22 +61,66 @@ jobs:
         node-version: '18'
     - run: npm install -g newman newman-reporter-htmlextra
 
-    # Bước 7: Chạy kiểm thử Newman
+    # Bước 7: Chạy kiểm thử Newman với multiple collections
     - name: Run Newman Tests 🚀
       run: |
-        echo "🧪 Running Newman tests..."
-        newman run tests/api/collection.json \
-          -e tests/api/environment.json \
-          --reporters cli,htmlextra \
-          --reporter-htmlextra-export reports/newman-report.html
+        echo "🧪 Running Newman tests for multiple collections..."
+        
+        # Tạo thư mục reports nếu chưa tồn tại
+        mkdir -p reports
+        
+        # Define collections to test
+        collections=(
+          "GET_Categories_Tree_API.postman_collection.json"
+          "GET_Category_Details_API.postman_collection.json"
+          "POST_Categories_API.postman_collection.json"
+        )
+        
+        # Run tests for each collection
+        overall_status=0
+        for collection in "${collections[@]}"; do
+          collection_name=$(basename "$collection" .postman_collection.json)
+          report_file="reports/${collection_name}_report.html"
+          log_file="reports/${collection_name}.log"
+          
+          echo -e "\n🧪 Testing Collection: $collection_name"
+          
+          newman run "./tests/api/$collection" \
+            --environment "./tests/api/environment.json" \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export "$report_file" \
+            --reporter-htmlextra-title "$collection_name Test Report" 2>&1 | tee "$log_file"
+          
+          # Capture exit status
+          if [ ${PIPESTATUS[0]} -ne 0 ]; then
+            echo "❌ $collection_name tests failed"
+            overall_status=1
+          else
+            echo "✅ $collection_name tests passed"
+          fi
+          
+          # Generate summary
+          echo "📊 Report: $report_file"
+          echo "📋 Log: $log_file"
+        done
+        
+        # Exit with overall status
+        if [ $overall_status -ne 0 ]; then
+          echo "❌ Some tests failed!"
+          exit 1
+        else
+          echo "✅ All tests passed!"
+          exit 0
+        fi
 
     # Bước 8: Upload báo cáo (luôn chạy)
-    - name: Upload Test Report 📊
+    - name: Upload Test Reports 📊
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: newman-test-report
-        path: reports/newman-report.html
+      name: newman-test-reports
+      path: reports/
+      retention-days: 7
 
     # Bước 9: Dọn dẹp (luôn chạy)
     - name: Cleanup 🧹

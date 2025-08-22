@@ -1,0 +1,203 @@
+{
+	"info": {
+		"_postman_id": "04d6e8e3-cbc5-4cdb-ab76-c66394a1c97b",
+		"name": "POST Categories API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39635915"
+	},
+	"item": [
+		{
+			"name": "Test Cases for POST /categories",
+			"item": [
+				{
+					"name": "TC1 - Create root category (success)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function() {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response should contain created category\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.name).to.eql('New Category');",
+									"    pm.expect(jsonData.slug).to.eql('new-category');",
+									"    pm.expect(jsonData.parent_id).to.be.null;",
+									"});",
+									"",
+									"pm.test(\"Should have created_at timestamp\", function() {",
+									"    pm.expect(pm.response.json().created_at).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"New Category\",\n  \"slug\": \"new-category\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC2 - Create subcategory (success)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function() {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Should have correct parent_id\", function() {",
+									"    pm.expect(pm.response.json().parent_id).to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"New Subcategory\",\n  \"slug\": \"new-sub\",\n  \"parent_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC3 - Missing required fields (error)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Should have validation errors\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.exist;",
+									"    pm.expect(jsonData.message).to.include('validation');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"New Category\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TC4 - Duplicate slug (error)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function() {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"",
+									"pm.test(\"Should have slug error\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors.slug).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Existing Category\",\n  \"slug\": \"electronics\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8091"
+		}
+	]
+}

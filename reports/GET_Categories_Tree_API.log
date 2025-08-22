@@ -1,0 +1,47 @@
+newman
+
+GET Categories Tree API
+
+❏ Test Cases for GET /categories/tree
+↳ TC1 - Get full categories tree (success)
+  GET http://localhost:8091/categories/tree [200 OK, 1.19kB, 604ms]
+  ✓  Status code is 200
+  ✓  Response should be array
+  ✓  Should only contain root categories
+
+↳ TC2 - Get tree by existing slug (success)
+  GET http://localhost:8091/categories/tree?by_category_slug=electronics [200 OK, 253B, 45ms]
+  ✓  Status code is 200
+  1. Should return 1 category with matching slug
+
+↳ TC3 - Get tree by non-existing slug (empty result)
+  GET http://localhost:8091/categories/tree?by_category_slug=non-existing-slug [200 OK, 253B, 27ms]
+  ✓  Status code is 200
+  ✓  Should return empty array
+
+┌─────────────────────────┬────────────────────┬────────────────────┐
+│                         │           executed │             failed │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│              iterations │                  1 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│                requests │                  3 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│            test-scripts │                  3 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│      prerequest-scripts │                  0 │                  0 │
+├─────────────────────────┼────────────────────┼────────────────────┤
+│              assertions │                  7 │                  1 │
+├─────────────────────────┴────────────────────┴────────────────────┤
+│ total run duration: 898ms                                         │
+├───────────────────────────────────────────────────────────────────┤
+│ total data received: 939B (approx)                                │
+├───────────────────────────────────────────────────────────────────┤
+│ average response time: 225ms [min: 27ms, max: 604ms, s.d.: 267ms] │
+└───────────────────────────────────────────────────────────────────┘
+
+[31m  # [39m[31m failure        [39m[31m detail                                                                                   [39m
+[90m    [39m[90m                [39m[90m                                                                                          [39m
+ 1.  AssertionError  Should return 1 category with matching slug                                              
+                     expected [] to have a length of 1 but got +0                                             
+                     at assertion:1 in test-script                                                            
+                     inside "Test Cases for GET /categories/tree / TC2 - Get tree by existing slug (success)" 

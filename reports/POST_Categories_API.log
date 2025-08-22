@@ -1,0 +1,72 @@
+newman
+
+POST Categories API
+
+❏ Test Cases for POST /categories
+↳ TC1 - Create root category (success)
+  POST http://localhost:8091/categories [201 Created, 309B, 84ms]
+  ✓  Status code is 201
+  1. Response should contain created category
+  2. Should have created_at timestamp
+
+↳ TC2 - Create subcategory (success)
+  POST http://localhost:8091/categories [201 Created, 321B, 22ms]
+  ✓  Status code is 201
+  ✓  Should have correct parent_id
+
+↳ TC3 - Missing required fields (error)
+  POST http://localhost:8091/categories [422 Unprocessable Content, 280B, 30ms]
+  ✓  Status code is 422
+  3. Should have validation errors
+
+↳ TC4 - Duplicate slug (error)
+  POST http://localhost:8091/categories [201 Created, 313B, 34ms]
+  4. Status code is 422
+  5. Should have slug error
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │                 4 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │                 4 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 0 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │                 9 │                5 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 384ms                                      │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 215B (approx)                             │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 42ms [min: 22ms, max: 84ms, s.d.: 24ms] │
+└────────────────────────────────────────────────────────────────┘
+
+[31m  # [39m[31m failure        [39m[31m detail                                                                           [39m
+[90m    [39m[90m                [39m[90m                                                                                  [39m
+ 1.  AssertionError  Response should contain created category                                         
+                     expected undefined to be null                                                    
+                     at assertion:1 in test-script                                                    
+                     inside "Test Cases for POST /categories / TC1 - Create root category (success)"  
+[90m    [39m[90m                [39m[90m                                                                                  [39m
+ 2.  AssertionError  Should have created_at timestamp                                                 
+                     expected undefined to exist                                                      
+                     at assertion:2 in test-script                                                    
+                     inside "Test Cases for POST /categories / TC1 - Create root category (success)"  
+[90m    [39m[90m                [39m[90m                                                                                  [39m
+ 3.  AssertionError  Should have validation errors                                                    
+                     expected undefined to exist                                                      
+                     at assertion:1 in test-script                                                    
+                     inside "Test Cases for POST /categories / TC3 - Missing required fields (error)" 
+[90m    [39m[90m                [39m[90m                                                                                  [39m
+ 4.  AssertionError  Status code is 422                                                               
+                     expected response to have status code 422 but got 201                            
+                     at assertion:0 in test-script                                                    
+                     inside "Test Cases for POST /categories / TC4 - Duplicate slug (error)"          
+[90m    [39m[90m                [39m[90m                                                                                  [39m
+ 5.  TypeError       Should have slug error                                                           
+                     Cannot read properties of undefined (reading 'slug')                             
+                     at assertion:1 in test-script                                                    
+                     inside "Test Cases for POST /categories / TC4 - Duplicate slug (error)"          
