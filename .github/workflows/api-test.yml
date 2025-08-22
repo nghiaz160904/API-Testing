@@ -118,9 +118,9 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-      name: newman-test-reports
-      path: reports/
-      retention-days: 7
+        name: newman-test-reports
+        path: reports/
+        retention-days: 7
 
     # Bước 9: Dọn dẹp (luôn chạy)
     - name: Cleanup 🧹
